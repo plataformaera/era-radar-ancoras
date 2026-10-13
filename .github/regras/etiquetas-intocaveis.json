@@ -1,0 +1,1 @@
+{"conditions":{"ref_name":{"exclude":[],"include":["~ALL"]}},"enforcement":"active","name":"etiquetas intocaveis","rules":[{"type":"deletion"},{"type":"non_fast_forward"},{"type":"update"}],"target":"tag"}

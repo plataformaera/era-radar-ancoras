@@ -1,0 +1,1 @@
+{"conditions":{"ref_name":{"exclude":[],"include":["~DEFAULT_BRANCH"]}},"enforcement":"active","name":"historico intocavel","rules":[{"type":"deletion"},{"type":"non_fast_forward"},{"type":"required_linear_history"}],"target":"branch"}

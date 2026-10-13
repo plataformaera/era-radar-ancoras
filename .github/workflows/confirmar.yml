@@ -1,0 +1,36 @@
+name: Âncoras do acervo do ERA Radar
+
+# A âncora de cada carga diária nasce no Mac (job_acervo_github.py do era-sistema) e entra direto no main. Aqui, a cada
+# três horas, só com o que já é público: âncora sem carimbo vai aos calendários OpenTimestamps e carimbo pendente busca
+# a confirmação no Bitcoin. O formato é conferido antes de gravar (só número, data, hashes e carimbos).
+
+on:
+  schedule:
+    - cron: '50 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ancoras-radar
+  cancel-in-progress: false
+
+jobs:
+  confirmar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.9'
+      - run: python3 scripts/ancora_radar.py confirmar
+      - name: Confere o formato antes de gravar (só número, data, hashes e carimbos)
+        run: python3 scripts/ancora_radar.py formato
+      - name: Grava os carimbos novos
+        run: |
+          git config user.name "era-radar-ancoras"
+          git config user.email "contato@plataformaera.com"
+          git add ancoras 2>/dev/null || true
+          if git diff --cached --quiet; then echo "nada novo"; else git commit -m "Carimbos das âncoras do acervo do ERA Radar em $(date -u +%Y-%m-%dT%H:%MZ)" && git push; fi
